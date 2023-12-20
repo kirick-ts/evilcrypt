@@ -10,18 +10,6 @@ const message = Buffer.from('Hello, World!');
 const key = randomBytes(64);
 let message_encrypted;
 
-async function expectPromiseReject(promise) {
-	let error;
-	try {
-		await promise;
-	}
-	catch (error_) {
-		error = error_;
-	}
-
-	expect(error).toBeInstanceOf(Error);
-}
-
 describe('encrypt', () => {
 	test('default message', async () => {
 		message_encrypted = await encrypt(message, key);
@@ -33,9 +21,7 @@ describe('encrypt', () => {
 			randomBytes(32),
 		);
 
-		// FIXME: Bun throws with "Expected value must be a function" error.
-		// await expect(encrypt_promise).rejects.toThrow();
-		await expectPromiseReject(encrypt_promise);
+		await expect(encrypt_promise).rejects.toThrow();
 	});
 });
 
@@ -52,8 +38,6 @@ describe('decrypt', () => {
 			randomBytes(64),
 		);
 
-		// FIXME: Bun throws with "Expected value must be a function" error.
-		// await expect(decrypt_promise).rejects.toThrow();
-		await expectPromiseReject(decrypt_promise);
+		await expect(decrypt_promise).rejects.toThrow();
 	});
 });

@@ -1,8 +1,8 @@
 {
 	"name": "evilcrypt",
-	"version": "0.2.0-beta.1",
+	"version": "0.2.0-beta.2",
 	"description": "Collection of crypto functions",
-	"main": "dist/main.cjs",
+	"main": "src/main.js",
 	"type": "module",
 	"exports": {
 		".": {
@@ -10,7 +10,7 @@
 				"browser": "./dist/browser/main.min.js",
 				"default": "./src/main.js"
 			},
-			"require": "./dist/main.cjs"
+			"require": "./dist/evilcrypt.cjs"
 		}
 	},
 	"engines": {
@@ -30,8 +30,8 @@
 		"test": "npm run test-node && bun test",
 		"test-node": "NODE_OPTIONS=--experimental-vm-modules jest",
 		"build": "bun run build-cjs",
-		"build-cjs": "bunx esbuild --bundle --format=cjs --platform=node --outfile=dist/main.cjs src/main.js",
-		"publish": "bun run build && npm test && npm publish --tag beta"
+		"build-cjs": "bunx esbuild --bundle --platform=node --format=cjs --packages=external --outfile=dist/evilcrypt.cjs src/main.js",
+		"npm-publish": "bun run build && npm test && npm publish --tag beta"
 	},
 	"repository": {
 		"type": "git",

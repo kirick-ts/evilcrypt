@@ -10,18 +10,6 @@ const message = Buffer.from('Hello, world!');
 const key = randomBytes(64);
 let message_encrypted;
 
-async function expectPromiseReject(promise) {
-	let error;
-	try {
-		await promise;
-	}
-	catch (error_) {
-		error = error_;
-	}
-
-	expect(error).toBeInstanceOf(Error);
-}
-
 describe('encrypt', () => {
 	test('default message', async () => {
 		message_encrypted = await encrypt(message, key);
@@ -44,9 +32,7 @@ describe('decrypt', () => {
 			key,
 		);
 
-		// FIXME: Bun throws with "Expected value must be a function" error.
-		// await expect(decrypt_promise).rejects.toThrow();
-		await expectPromiseReject(decrypt_promise);
+		await expect(decrypt_promise).rejects.toThrow();
 	});
 
 	test('encrypted message from evilcrypt@0.1.0', async () => {
