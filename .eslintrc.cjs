@@ -25,6 +25,9 @@ module.exports = {
 		'unicorn',
 		'node',
 	],
+	ignorePatterns: [
+		'dist/**/*',
+	],
 	rules: {
 		'array-bracket-spacing': [
 			'warn',

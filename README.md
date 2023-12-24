@@ -52,15 +52,31 @@ When decrypting, you can use `decrypt` directly from core module. It will automa
 
 ## Algorithms
 
-### #1
+### v1
 
-| Parameter          | Value         |
-| ------------------ | ------------- |
-| AES algorithm      | AES-256-CBC   |
-| PBKDF2 algorithm   | PBKDF2-SHA256 |
-| PBKDF2 iterations  | 100 000       |
-| Checksum algorithm | SHA-256       |
-| Checksum length    | 32 bytes      |
-| Key length         | 64 bytes      |
+| Parameter              | Value          |
+| ------------------     | -------------  |
+| AES algorithm          | AES-256-CBC    |
+| PBKDF2 algorithm       | PBKDF2-SHA256  |
+| PBKDF2 iterations      | 100 000        |
+| Message padding length | 64...2048 bits |
+| Checksum algorithm     | SHA-256        |
+| Checksum length        | 32 bytes       |
+| Key length             | 64 bytes       |
 
-The first and only algorithm for now inspired by [Telegram](https://core.telegram.org/techfaq#q-how-does-server-client-encryption-work-in-mtproto). Its output are pretty long because it contains 32-byte checksum, so it may be not suitable for short messages.
+The first algorithm inspired by [Telegram](https://core.telegram.org/techfaq#q-how-does-server-client-encryption-work-in-mtproto). Its output are pretty long because it contains 32-byte checksum and long padding, so it may be not suitable for short messages.
+
+### v2
+
+| Parameter                  | Value         |
+| ------------------         | ------------- |
+| AES algorithm              | AES-256-CBC   |
+| PBKDF2 algorithm           | PBKDF2-SHA256 |
+| PBKDF2 iterations          | 100 000       |
+| Message padding length     | 22...62 bits  |
+| Checksum algorithm         | PBKDF2-SHA256 |
+| Checksum PBKDF2 iterations | 100 000       |
+| Checksum length            | 12 bytes      |
+| Key length                 | 64 bytes      |
+
+The second algorithm was created to encrypt short messages. It has shorter output than the first one due to shorter checksum, but the checksum is calculated using PBKDF2 with 100 000 iterations to make it harder to brute-force. Message padding is also shorter with maximum length of 8 bytes.

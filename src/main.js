@@ -1,8 +1,10 @@
 
 import * as v1 from './versions/v1.js';
+import * as v2 from './versions/v2.js';
 
 const VERSIONS = {
 	1: v1,
+	2: v2,
 };
 
 /**
@@ -38,3 +40,4 @@ export async function decrypt(message_encrypted, key) {
 }
 
 export * as v1 from './versions/v1.js';
+export * as v2 from './versions/v2.js';

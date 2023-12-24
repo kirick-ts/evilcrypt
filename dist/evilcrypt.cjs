@@ -29,9 +29,10 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/main.js
 var main_exports = {};
 __export(main_exports, {
-  decrypt: () => decrypt3,
-  encrypt: () => encrypt3,
-  v1: () => v1_exports
+  decrypt: () => decrypt4,
+  encrypt: () => encrypt4,
+  v1: () => v1_exports,
+  v2: () => v2_exports
 });
 module.exports = __toCommonJS(main_exports);
 
@@ -210,14 +211,115 @@ async function decrypt2(message_encrypted, key) {
   );
 }
 
-// src/main.js
-var VERSIONS = {
-  1: v1_exports
-};
+// src/versions/v2.js
+var v2_exports = {};
+__export(v2_exports, {
+  decrypt: () => decrypt3,
+  encrypt: () => encrypt3
+});
+var import_node_crypto3 = require("node:crypto");
+var VERSION_ID_BUFFER2 = Buffer.from([2]);
+var AES_ALGORITHM2 = "aes-256-cbc";
+var PBKDF2_ITERATIONS2 = 1e5;
+var PBKDF2_MESSAGE_KEY_LENGTH = 12;
+var PBKDF2_AES_KEY_LENGTH = 64;
+var PBKDF2_DIGEST2 = "sha256";
+async function getMessageKey(payload, key_right) {
+  return pbkdf22(
+    payload,
+    key_right,
+    PBKDF2_ITERATIONS2,
+    PBKDF2_MESSAGE_KEY_LENGTH,
+    PBKDF2_DIGEST2
+  );
+}
+async function getAesArguments2(key_left, message_key) {
+  const derived = await pbkdf22(
+    key_left,
+    message_key,
+    PBKDF2_ITERATIONS2,
+    PBKDF2_AES_KEY_LENGTH,
+    PBKDF2_DIGEST2
+  );
+  return {
+    aes_iv: derived.subarray(0, 16),
+    aes_key: derived.subarray(32)
+  };
+}
 async function encrypt3(message, key) {
-  return encrypt2(message, key);
+  if (key.byteLength !== 64) {
+    throw new Error("Key must be 64 bytes.");
+  }
+  const padding_bytes_meta = (0, import_node_crypto3.randomBytes)(1);
+  const padding_additional_bytes_count = padding_bytes_meta[0] >>> 6;
+  const payload = Buffer.concat([
+    padding_bytes_meta,
+    (0, import_node_crypto3.randomBytes)(4 + padding_additional_bytes_count),
+    message
+  ]);
+  const key_left = key.subarray(0, 32);
+  const key_right = key.subarray(32);
+  const message_key = await getMessageKey(payload, key_right);
+  const { aes_iv, aes_key } = await getAesArguments2(key_left, message_key);
+  let payload_encrypted;
+  try {
+    payload_encrypted = encrypt(
+      AES_ALGORITHM2,
+      aes_iv,
+      aes_key,
+      payload
+    );
+  } catch {
+    throw new Error("Encrypt error.");
+  }
+  return Buffer.concat([
+    VERSION_ID_BUFFER2,
+    message_key,
+    payload_encrypted
+  ]);
 }
 async function decrypt3(message_encrypted, key) {
+  if (key.byteLength !== 64) {
+    throw new Error("Key must be 64 bytes.");
+  }
+  const message_key = message_encrypted.subarray(
+    1,
+    PBKDF2_MESSAGE_KEY_LENGTH + 1
+  );
+  const payload_encrypted = message_encrypted.subarray(PBKDF2_MESSAGE_KEY_LENGTH + 1);
+  const key_left = key.subarray(0, 32);
+  const key_right = key.subarray(32);
+  const { aes_iv, aes_key } = await getAesArguments2(key_left, message_key);
+  let payload;
+  try {
+    payload = decrypt(
+      AES_ALGORITHM2,
+      aes_iv,
+      aes_key,
+      payload_encrypted
+    );
+  } catch {
+    throw new Error("Decrypt error.");
+  }
+  const message_key_check = await getMessageKey(payload, key_right);
+  if (message_key_check.equals(message_key) !== true) {
+    throw new Error("Decrypt error.");
+  }
+  return payload.subarray(
+    4 + (payload[0] >>> 6) + 1
+    // eslint-disable-line no-bitwise
+  );
+}
+
+// src/main.js
+var VERSIONS = {
+  1: v1_exports,
+  2: v2_exports
+};
+async function encrypt4(message, key) {
+  return encrypt2(message, key);
+}
+async function decrypt4(message_encrypted, key) {
   const evilcrypt_version_id = message_encrypted[0];
   const version = VERSIONS[evilcrypt_version_id];
   if (!version) {
@@ -232,5 +334,6 @@ async function decrypt3(message_encrypted, key) {
 0 && (module.exports = {
   decrypt,
   encrypt,
-  v1
+  v1,
+  v2
 });

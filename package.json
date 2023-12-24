@@ -1,6 +1,6 @@
 {
 	"name": "evilcrypt",
-	"version": "0.2.0-beta.2",
+	"version": "0.2.0-beta.4",
 	"description": "Collection of crypto functions",
 	"main": "src/main.js",
 	"type": "module",
@@ -31,7 +31,8 @@
 		"test-node": "NODE_OPTIONS=--experimental-vm-modules jest",
 		"build": "bun run build-cjs",
 		"build-cjs": "bunx esbuild --bundle --platform=node --format=cjs --packages=external --outfile=dist/evilcrypt.cjs src/main.js",
-		"npm-publish": "bun run build && npm test && npm publish --tag beta"
+		"npm-publish": "bun run build && bun run eslint . && npm test && npm publish --tag beta",
+		"benchmark": "hyperfine --warmup=10 'node benchmarks/v2-encrypt.js' 'bun benchmarks/v2-encrypt.js'"
 	},
 	"repository": {
 		"type": "git",
