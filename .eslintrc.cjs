@@ -15,20 +15,30 @@ module.exports = {
 		'eslint:recommended',
 		'xo',
 		'plugin:import/recommended',
+		'plugin:jsdoc/recommended',
 		'plugin:promise/recommended',
 		'plugin:unicorn/recommended',
 		'plugin:node/recommended',
 	],
 	plugins: [
 		'import',
+		'jsdoc',
 		'promise',
 		'unicorn',
 		'node',
 	],
 	ignorePatterns: [
 		'dist/**/*',
+		'node_modules*/**/*',
 	],
 	rules: {
+		'arrow-body-style': [
+			'error',
+			'as-needed',
+			{
+				requireReturnForObjectLiteral: true,
+			},
+		],
 		'array-bracket-spacing': [
 			'warn',
 			'always',
@@ -56,6 +66,14 @@ module.exports = {
 			'error',
 			'always',
 		],
+		'import/no-unresolved': [
+			'error',
+			{
+				ignore: [
+					'bun:*',
+				],
+			},
+		],
 		'import/order': [
 			'error',
 			{
@@ -78,6 +96,7 @@ module.exports = {
 				SwitchCase: 1,
 			},
 		],
+		'jsdoc/require-jsdoc': 'error',
 		'new-cap': [
 			'error',
 			{
@@ -95,7 +114,9 @@ module.exports = {
 				},
 			},
 		],
+		'no-multiple-empty-lines': 'warn',
 		'no-promise-executor-return': 'off',
+		'no-trailing-spaces': 'warn',
 		'no-unused-vars': 'warn',
 		'node/no-missing-import': 'off',
 		'node/no-unpublished-import': 'off',

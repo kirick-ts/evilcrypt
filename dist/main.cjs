@@ -42,7 +42,7 @@ __export(v1_exports, {
   decrypt: () => decrypt2,
   encrypt: () => encrypt2
 });
-var import_node_crypto2 = require("node:crypto");
+var import_node_crypto3 = require("node:crypto");
 
 // src/crypto/aes.js
 var crypto = __toESM(require("node:crypto"), 1);
@@ -72,10 +72,10 @@ function decrypt(algorithm, iv, key, data) {
 }
 
 // src/crypto/pbkdf2.js
-var crypto2 = __toESM(require("node:crypto"), 1);
-async function pbkdf22(secret, salt, iterations, key_length, digest = "sha256") {
+var import_node_crypto = require("node:crypto");
+async function pbkdf2(secret, salt, iterations, key_length, digest = "sha256") {
   return new Promise((resolve, reject) => {
-    crypto2.pbkdf2(
+    (0, import_node_crypto.pbkdf2)(
       secret,
       salt,
       iterations,
@@ -93,16 +93,16 @@ async function pbkdf22(secret, salt, iterations, key_length, digest = "sha256") 
 }
 
 // src/crypto/sha.js
-var crypto3 = __toESM(require("node:crypto"), 1);
+var crypto2 = __toESM(require("node:crypto"), 1);
 function sha256(buffer) {
-  return crypto3.createHash("sha256").update(buffer).digest();
+  return crypto2.createHash("sha256").update(buffer).digest();
 }
 
 // src/utils/random.js
-var import_node_crypto = require("node:crypto");
+var import_node_crypto2 = require("node:crypto");
 var RANDOM_NUMBER_LIMIT = 4294967296;
 function randomInt(min_incl, max_not_incl) {
-  const buffer = (0, import_node_crypto.randomBytes)(4);
+  const buffer = (0, import_node_crypto2.randomBytes)(4);
   const max_from_zero = max_not_incl - min_incl;
   const number = (buffer[0] << 24 | buffer[1] << 16 | buffer[2] << 8 | buffer[3]) >>> 0;
   const number_max = RANDOM_NUMBER_LIMIT - RANDOM_NUMBER_LIMIT % max_from_zero - 1;
@@ -119,7 +119,7 @@ var PBKDF2_ITERATIONS = 1e5;
 var PBKDF2_KEY_LENGTH = 64;
 var PBKDF2_DIGEST = "sha256";
 async function getAesArguments(key_left, message_key) {
-  const derived = await pbkdf22(
+  const derived = await pbkdf2(
     key_left,
     message_key,
     PBKDF2_ITERATIONS,
@@ -143,7 +143,7 @@ async function encrypt2(message, key) {
       256
     )
   );
-  const padding = (0, import_node_crypto2.randomBytes)(padding_length);
+  const padding = (0, import_node_crypto3.randomBytes)(padding_length);
   const payload = Buffer.concat([
     Buffer.from([
       padding_length
@@ -159,7 +159,10 @@ async function encrypt2(message, key) {
       key_right
     ])
   );
-  const { aes_iv, aes_key } = await getAesArguments(key_left, message_key);
+  const {
+    aes_iv,
+    aes_key
+  } = await getAesArguments(key_left, message_key);
   let payload_encrypted;
   try {
     payload_encrypted = encrypt(
@@ -217,15 +220,15 @@ __export(v2_exports, {
   decrypt: () => decrypt3,
   encrypt: () => encrypt3
 });
-var import_node_crypto3 = require("node:crypto");
+var import_node_crypto4 = require("node:crypto");
 var VERSION_ID_BUFFER2 = Buffer.from([2]);
 var AES_ALGORITHM2 = "aes-256-cbc";
 var PBKDF2_ITERATIONS2 = 1e5;
 var PBKDF2_MESSAGE_KEY_LENGTH = 12;
 var PBKDF2_AES_KEY_LENGTH = 64;
 var PBKDF2_DIGEST2 = "sha256";
-async function getMessageKey(payload, key_right) {
-  return pbkdf22(
+function getMessageKey(payload, key_right) {
+  return pbkdf2(
     payload,
     key_right,
     PBKDF2_ITERATIONS2,
@@ -234,7 +237,7 @@ async function getMessageKey(payload, key_right) {
   );
 }
 async function getAesArguments2(key_left, message_key) {
-  const derived = await pbkdf22(
+  const derived = await pbkdf2(
     key_left,
     message_key,
     PBKDF2_ITERATIONS2,
@@ -250,11 +253,11 @@ async function encrypt3(message, key) {
   if (key.byteLength !== 64) {
     throw new Error("Key must be 64 bytes.");
   }
-  const padding_bytes_meta = (0, import_node_crypto3.randomBytes)(1);
+  const padding_bytes_meta = (0, import_node_crypto4.randomBytes)(1);
   const padding_additional_bytes_count = padding_bytes_meta[0] >>> 6;
   const payload = Buffer.concat([
     padding_bytes_meta,
-    (0, import_node_crypto3.randomBytes)(4 + padding_additional_bytes_count),
+    (0, import_node_crypto4.randomBytes)(4 + padding_additional_bytes_count),
     message
   ]);
   const key_left = key.subarray(0, 32);

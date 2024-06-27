@@ -1,7 +1,9 @@
 
-/* global describe, test, expect */
-
 import { randomBytes } from 'node:crypto';
+import {
+	describe,
+	test,
+	expect }           from 'vitest';
 import {
 	encrypt,
 	decrypt,

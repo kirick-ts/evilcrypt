@@ -12,7 +12,13 @@ const PBKDF2_MESSAGE_KEY_LENGTH = 12;
 const PBKDF2_AES_KEY_LENGTH = 64;
 const PBKDF2_DIGEST = 'sha256';
 
-async function getMessageKey(payload, key_right) {
+/**
+ * Derives the message key.
+ * @param {Buffer} payload The payload to derive the message key from.
+ * @param {Buffer} key_right The right 32 bytes of the key.
+ * @returns {Promise<Buffer>} The message key.
+ */
+function getMessageKey(payload, key_right) {
 	return pbkdf2(
 		payload,
 		key_right,
@@ -22,6 +28,12 @@ async function getMessageKey(payload, key_right) {
 	);
 }
 
+/**
+ * Derives AES initialization vector and key.
+ * @param {Buffer} key_left The left 32 bytes of the key.
+ * @param {Buffer} message_key The message key.
+ * @returns {Promise<{ aes_iv: Buffer, aes_key: Buffer }>} The AES arguments.
+ */
 async function getAesArguments(key_left, message_key) {
 	const derived = await pbkdf2(
 		key_left,
@@ -39,10 +51,9 @@ async function getAesArguments(key_left, message_key) {
 
 /**
  * Encrypts a message using EvilCrypt algorithm #2.
- * @async
  * @param {Buffer} message The message to encrypt.
  * @param {Buffer} key The 64 byte key to encrypt with.
- * @returns {Buffer} The encrypted message.
+ * @returns {Promise<Buffer>} The encrypted message.
  */
 export async function encrypt(message, key) {
 	if (key.byteLength !== 64) {
@@ -91,10 +102,9 @@ export async function encrypt(message, key) {
 
 /**
  * Decrypts a message using EvilCrypt algorithm #2.
- * @async
  * @param {Buffer} message_encrypted The encrypted message to decrypt.
  * @param {Buffer} key The 64 byte key to decrypt with.
- * @returns {Buffer} The decrypted message.
+ * @returns {Promise<Buffer>} The decrypted message.
  */
 export async function decrypt(message_encrypted, key) {
 	if (key.byteLength !== 64) {

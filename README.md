@@ -8,6 +8,10 @@ EvilCrypt is a collection of symmetric encryption algorithms that extends AES. D
 First, install the package:
 
 ```bash
+bun install evilcrypt
+# or
+pnpm install evilcrypt
+# or
 npm install evilcrypt
 ```
 

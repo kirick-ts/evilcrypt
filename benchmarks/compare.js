@@ -2,7 +2,6 @@
 import { randomBytes }          from 'node:crypto';
 import { encrypt as encryptV1 } from '../src/versions/v1.js';
 import { encrypt as encryptV2 } from '../src/versions/v2.js';
-import { randomInt } from '../src/utils/random.js';
 
 const METHODS = {
 	v1: encryptV1,

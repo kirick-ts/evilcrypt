@@ -1,6 +1,8 @@
 
-/* global describe, test, expect */
-
+import {
+	describe,
+	test,
+	expect }         from 'vitest';
 import { randomInt } from './random.js';
 
 describe('randomInt', () => {

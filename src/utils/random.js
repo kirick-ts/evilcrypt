@@ -2,6 +2,12 @@
 import { randomBytes } from 'node:crypto';
 
 const RANDOM_NUMBER_LIMIT = 4294967296; // 2^32, 4 bytes
+
+/**
+ * @param {number} min_incl - Minimum value to return.
+ * @param {number} max_not_incl - Maximum value to return (not inclusive).
+ * @returns {number} -
+ */
 export function randomInt(min_incl, max_not_incl) {
 	const buffer = randomBytes(4);
 
