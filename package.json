@@ -1,6 +1,6 @@
 {
 	"name": "evilcrypt",
-	"version": "0.2.2-beta.2",
+	"version": "0.2.2-beta.3",
 	"description": "Collection of crypto functions.",
 	"publishConfig": {
 		"access": "public"

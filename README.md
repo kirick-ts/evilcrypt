@@ -1,11 +1,10 @@
-
 # evilcrypt
 
-EvilCrypt is a collection of symmetric encryption algorithms that extends AES. Different versions of algorithms have different parameters such as key length, checksum length or speed.
+EvilCrypt is a collection of symmetric encryption algorithms that extend AES. Each algorithm version offers different parameters, such as key length, checksum length, or encryption speed, to suit various use cases.
 
 ## Getting started
 
-First, install the package:
+You can install the package using your preferred package manager:
 
 ```bash
 bun install evilcrypt
@@ -15,13 +14,14 @@ pnpm install evilcrypt
 npm install evilcrypt
 ```
 
-Then, use it. For example, to encrypt a string:
+To encrypt and decrypt a string, follow this example:
 
 ```javascript
 import { randomBytes } from 'node:crypto';
 import {
     encrypt,
-    decrypt }          from 'evilcrypt';
+    decrypt,
+} from 'evilcrypt';
 
 const message = 'Hello world!';
 const message_buffer = Buffer.from(message, 'utf8');
@@ -44,15 +44,21 @@ console.log(message_decrypted.toString('utf8'));
 // 'Hello world!'
 ```
 
-By using `encrypt` method, you will encrypt a message using algorithm `#1`. To use other algorithms, use `encrypt` methods of the corresponding algorithm:
+By default, the `encrypt` method uses algorithm `v1`. If you want to use a different algorithm, call the encrypt method of that specific version:
 
 ```javascript
-import { v1 as evilcrypt_v1 } from 'evilcrypt';
+import { v2 as evilcrypt_v2 } from 'evilcrypt';
 
-const message_encrypted = await evilcrypt_v1.encrypt(message_buffer, key);
+const message_encrypted = await evilcrypt_v2.encrypt(message_buffer, key);
 ```
 
-When decrypting, you can use `decrypt` directly from core module. It will automatically detect the algorithm used to encrypt the message.
+For decryption, use the `decrypt` method from the core module. It automatically detects the algorithm used to encrypt the message.
+
+```javascript
+import { decrypt } from 'evilcrypt';
+
+const message = await decrypt(message_encrypted, key);
+```
 
 ## Algorithms
 
@@ -68,7 +74,7 @@ When decrypting, you can use `decrypt` directly from core module. It will automa
 | Checksum length        | 32 bytes      |
 | Key length             | 64 bytes      |
 
-The first algorithm inspired by [Telegram](https://core.telegram.org/techfaq#q-how-does-server-client-encryption-work-in-mtproto). Its output are pretty long because it contains 32-byte checksum and long padding, so it may be not suitable for short messages.
+`v1` is inspired by [Telegram’s MTProto encryption](https://core.telegram.org/techfaq#q-how-does-server-client-encryption-work-in-mtproto). Its output is relatively long because it includes a 32-byte checksum and extensive padding. This makes it less suitable for encrypting short messages.
 
 ### v2
 
@@ -78,9 +84,9 @@ The first algorithm inspired by [Telegram](https://core.telegram.org/techfaq#q-h
 | PBKDF2 algorithm           | PBKDF2-SHA256        |
 | PBKDF2 iterations          | 100 000              |
 | Message padding length     | 6 bits + 4...7 bytes |
-| Checksum algorithm         | SHA256               |
+| Checksum algorithm         | PBKDF2-SHA256        |
 | Checksum PBKDF2 iterations | 100 000              |
 | Checksum length            | 12 bytes             |
 | Key length                 | 64 bytes             |
 
-The second algorithm was created to encrypt short messages. It has shorter output than the first one due to shorter checksum, but the checksum is calculated using PBKDF2 with 100 000 iterations to make it harder to brute-force. Message padding is also shorter with maximum length of 8 bytes.
+`v2` is optimized for encrypting short messages, such as tokens. It produces shorter outputs compared to `v1` due to its reduced checksum length. However, the checksum is computed using PBKDF2 with 100 000 iterations, making brute-force attempts more difficult. The padding length is also minimized, with a maximum length of 62 bits.
