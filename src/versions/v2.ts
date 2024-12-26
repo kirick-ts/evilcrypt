@@ -1,7 +1,7 @@
-
 import { randomBytes } from 'node:crypto';
-import * as aes        from '../crypto/aes.js';
-import { pbkdf2 }      from '../crypto/pbkdf2.js';
+import * as aes from '../crypto/aes.js';
+import { pbkdf2 } from '../crypto/pbkdf2.js';
+import type { AesArgs } from '../types.js';
 
 const VERSION_ID_BUFFER = Buffer.from([ 2 ]);
 
@@ -14,11 +14,14 @@ const PBKDF2_DIGEST = 'sha256';
 
 /**
  * Derives the message key.
- * @param {Buffer} payload The payload to derive the message key from.
- * @param {Buffer} key_right The right 32 bytes of the key.
- * @returns {Promise<Buffer>} The message key.
+ * @param payload - The payload to derive the message key from.
+ * @param key_right - The right 32 bytes of the key.
+ * @returns The message key.
  */
-function getMessageKey(payload, key_right) {
+function getMessageKey(
+	payload: Buffer,
+	key_right: Buffer,
+): Promise<Buffer> {
 	return pbkdf2(
 		payload,
 		key_right,
@@ -30,11 +33,14 @@ function getMessageKey(payload, key_right) {
 
 /**
  * Derives AES initialization vector and key.
- * @param {Buffer} key_left The left 32 bytes of the key.
- * @param {Buffer} message_key The message key.
- * @returns {Promise<{ aes_iv: Buffer, aes_key: Buffer }>} The AES arguments.
+ * @param key_left - The left 32 bytes of the key.
+ * @param message_key - The message key.
+ * @returns The AES arguments.
  */
-async function getAesArguments(key_left, message_key) {
+async function getAesArguments(
+	key_left: Buffer,
+	message_key: Buffer,
+): Promise<AesArgs> {
 	const derived = await pbkdf2(
 		key_left,
 		message_key,
@@ -51,11 +57,14 @@ async function getAesArguments(key_left, message_key) {
 
 /**
  * Encrypts a message using EvilCrypt algorithm #2.
- * @param {Buffer} message The message to encrypt.
- * @param {Buffer} key The 64 byte key to encrypt with.
- * @returns {Promise<Buffer>} The encrypted message.
+ * @param message - The message to encrypt.
+ * @param key - The 64 byte key to encrypt with.
+ * @returns The encrypted message.
  */
-export async function encrypt(message, key) {
+export async function encrypt(
+	message: Buffer,
+	key: Buffer,
+): Promise<Buffer> {
 	if (key.byteLength !== 64) {
 		throw new Error('Key must be 64 bytes.');
 	}
@@ -78,9 +87,12 @@ export async function encrypt(message, key) {
 
 	const message_key = await getMessageKey(payload, key_right);
 
-	const { aes_iv, aes_key } = await getAesArguments(key_left, message_key);
+	const {
+		aes_iv,
+		aes_key,
+	} = await getAesArguments(key_left, message_key);
 
-	let payload_encrypted;
+	let payload_encrypted: Buffer;
 	try {
 		payload_encrypted = aes.encrypt(
 			AES_ALGORITHM,
@@ -102,11 +114,14 @@ export async function encrypt(message, key) {
 
 /**
  * Decrypts a message using EvilCrypt algorithm #2.
- * @param {Buffer} message_encrypted The encrypted message to decrypt.
- * @param {Buffer} key The 64 byte key to decrypt with.
- * @returns {Promise<Buffer>} The decrypted message.
+ * @param message_encrypted - The encrypted message to decrypt.
+ * @param key - The 64 byte key to decrypt with.
+ * @returns The decrypted message.
  */
-export async function decrypt(message_encrypted, key) {
+export async function decrypt(
+	message_encrypted: Buffer,
+	key: Buffer,
+): Promise<Buffer> {
 	if (key.byteLength !== 64) {
 		throw new Error('Key must be 64 bytes.');
 	}
@@ -120,9 +135,12 @@ export async function decrypt(message_encrypted, key) {
 	const key_left = key.subarray(0, 32);
 	const key_right = key.subarray(32);
 
-	const { aes_iv, aes_key } = await getAesArguments(key_left, message_key);
+	const {
+		aes_iv,
+		aes_key,
+	} = await getAesArguments(key_left, message_key);
 
-	let payload;
+	let payload: Buffer;
 	try {
 		payload = aes.decrypt(
 			AES_ALGORITHM,

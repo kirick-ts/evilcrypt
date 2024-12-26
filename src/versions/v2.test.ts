@@ -1,16 +1,17 @@
-
 import {
 	describe,
 	test,
-	expect }           from 'vitest';
+	expect,
+} from 'vitest';
 import { randomBytes } from 'node:crypto';
 import {
 	encrypt,
-	decrypt }          from './v2.js';
+	decrypt,
+} from './v2.js';
 
 const message = Buffer.from('Hello, World!');
 const key = randomBytes(64);
-let message_encrypted;
+let message_encrypted: Buffer;
 
 describe('encrypt', () => {
 	test('default message', async () => {

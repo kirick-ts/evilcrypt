@@ -1,8 +1,8 @@
-
 import {
 	describe,
 	test,
-	expect }         from 'vitest';
+	expect,
+} from 'vitest';
 import { randomInt } from './random.js';
 
 describe('randomInt', () => {
