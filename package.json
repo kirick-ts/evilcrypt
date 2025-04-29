@@ -1,7 +1,7 @@
 {
 	"name": "evilcrypt",
-	"version": "0.2.3-dev",
-	"description": "Collection of crypto functions.",
+	"version": "0.2.3",
+	"description": "Collection of symmetric encryption algorithms.",
 	"publishConfig": {
 		"access": "public"
 	},
