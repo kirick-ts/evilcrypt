@@ -36,7 +36,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/kirick13/evilcrypt.git"
+		"url": "git+https://github.com/kirick-ts/evilcrypt.git"
 	},
 	"keywords": [
 		"crypto",
@@ -47,7 +47,7 @@
 	"author": "Daniil Kirichenko (https://twitter.com/kirickme)",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/kirick13/evilcrypt/issues"
+		"url": "https://github.com/kirick-ts/evilcrypt/issues"
 	},
-	"homepage": "https://github.com/kirick13/evilcrypt#readme"
+	"homepage": "https://github.com/kirick-ts/evilcrypt#readme"
 }
