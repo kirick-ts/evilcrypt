@@ -31,7 +31,7 @@ export function encrypt(
 export function decrypt(
 	message_encrypted: Buffer,
 	key: Buffer,
-) {
+): Promise<Buffer> {
 	const evilcrypt_version_id = message_encrypted[0];
 	const version = VERSIONS[evilcrypt_version_id];
 	if (!version) {

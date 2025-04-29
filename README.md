@@ -1,5 +1,8 @@
 # evilcrypt
 
+[![npm version](https://img.shields.io/npm/v/evilcrypt.svg)](https://www.npmjs.com/package/evilcrypt)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
 EvilCrypt is a collection of symmetric encryption algorithms that extend AES. Each algorithm version offers different parameters, such as key length, checksum length, or encryption speed, to suit various use cases.
 
 ## Getting started

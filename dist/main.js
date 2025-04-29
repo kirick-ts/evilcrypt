@@ -1,34 +1,5 @@
-"use strict";
-//#region rolldown:runtime
-var __create = Object.create;
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __export = (target, all) => {
-	for (var name in all) __defProp(target, name, {
-		get: all[name],
-		enumerable: true
-	});
-};
-var __copyProps = (to, from, except, desc) => {
-	if (from && typeof from === "object" || typeof from === "function") for (var keys = __getOwnPropNames(from), i = 0, n = keys.length, key; i < n; i++) {
-		key = keys[i];
-		if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
-			get: ((k) => from[k]).bind(null, key),
-			enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
-		});
-	}
-	return to;
-};
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", {
-	value: mod,
-	enumerable: true
-}) : target, mod));
-
-//#endregion
-const node_crypto = __toESM(require("node:crypto"));
+import { __export } from "./chunk-Cl8Af3a2.js";
+import { createCipheriv, createDecipheriv, createHash, pbkdf2, randomBytes } from "node:crypto";
 
 //#region src/crypto/aes.ts
 /**
@@ -40,7 +11,7 @@ const node_crypto = __toESM(require("node:crypto"));
 * @returns The encrypted data.
 */
 function encrypt$3(algorithm, iv, key, data) {
-	const cipher = (0, node_crypto.createCipheriv)(algorithm, key, iv);
+	const cipher = createCipheriv(algorithm, key, iv);
 	cipher.setAutoPadding(true);
 	return Buffer.concat([cipher.update(data), cipher.final()]);
 }
@@ -53,7 +24,7 @@ function encrypt$3(algorithm, iv, key, data) {
 * @returns The decrypted data.
 */
 function decrypt$3(algorithm, iv, key, data) {
-	const decipher = (0, node_crypto.createDecipheriv)(algorithm, key, iv);
+	const decipher = createDecipheriv(algorithm, key, iv);
 	decipher.setAutoPadding(true);
 	return Buffer.concat([decipher.update(data), decipher.final()]);
 }
@@ -70,9 +41,9 @@ function decrypt$3(algorithm, iv, key, data) {
 * @param digest - The digest to use. Default: `sha256`.
 * @returns The derived key.
 */
-function pbkdf2(secret, salt, iterations, key_length, digest = "sha256") {
+function pbkdf2$1(secret, salt, iterations, key_length, digest = "sha256") {
 	return new Promise((resolve, reject) => {
-		(0, node_crypto.pbkdf2)(secret, salt, iterations, key_length, digest, (error, derived_key) => {
+		pbkdf2(secret, salt, iterations, key_length, digest, (error, derived_key) => {
 			if (error) reject(error);
 			else resolve(derived_key);
 		});
@@ -87,7 +58,7 @@ function pbkdf2(secret, salt, iterations, key_length, digest = "sha256") {
 * @returns The SHA256 hash.
 */
 function sha256(buffer) {
-	return (0, node_crypto.createHash)("sha256").update(buffer).digest();
+	return createHash("sha256").update(buffer).digest();
 }
 
 //#endregion
@@ -99,7 +70,7 @@ const RANDOM_NUMBER_LIMIT = 4294967296;
 * @returns -
 */
 function randomInt(min_incl, max_not_incl) {
-	const buffer = (0, node_crypto.randomBytes)(4);
+	const buffer = randomBytes(4);
 	const max_from_zero = max_not_incl - min_incl;
 	const number = (buffer[0] << 24 | buffer[1] << 16 | buffer[2] << 8 | buffer[3]) >>> 0;
 	const number_max = RANDOM_NUMBER_LIMIT - RANDOM_NUMBER_LIMIT % max_from_zero - 1;
@@ -126,7 +97,7 @@ const PBKDF2_DIGEST$1 = "sha256";
 * @returns The AES arguments.
 */
 async function getAesArguments$1(key_left, message_key) {
-	const derived = await pbkdf2(key_left, message_key, PBKDF2_ITERATIONS$1, PBKDF2_KEY_LENGTH, PBKDF2_DIGEST$1);
+	const derived = await pbkdf2$1(key_left, message_key, PBKDF2_ITERATIONS$1, PBKDF2_KEY_LENGTH, PBKDF2_DIGEST$1);
 	return {
 		aes_iv: derived.subarray(0, 16),
 		aes_key: derived.subarray(32)
@@ -142,7 +113,7 @@ async function encrypt$2(message, key) {
 	if (key.byteLength !== 64) throw new Error("Key must be 64 bytes.");
 	const message_length = message.byteLength;
 	const padding_length = randomInt(8, Math.min(Math.round(message_length * .4) + 12, 256));
-	const padding = (0, node_crypto.randomBytes)(padding_length);
+	const padding = randomBytes(padding_length);
 	const payload = Buffer.concat([
 		Buffer.from([padding_length]),
 		padding,
@@ -208,7 +179,7 @@ const PBKDF2_DIGEST = "sha256";
 * @returns The message key.
 */
 function getMessageKey(payload, key_right) {
-	return pbkdf2(payload, key_right, PBKDF2_ITERATIONS, PBKDF2_MESSAGE_KEY_LENGTH, PBKDF2_DIGEST);
+	return pbkdf2$1(payload, key_right, PBKDF2_ITERATIONS, PBKDF2_MESSAGE_KEY_LENGTH, PBKDF2_DIGEST);
 }
 /**
 * Derives AES initialization vector and key.
@@ -217,7 +188,7 @@ function getMessageKey(payload, key_right) {
 * @returns The AES arguments.
 */
 async function getAesArguments(key_left, message_key) {
-	const derived = await pbkdf2(key_left, message_key, PBKDF2_ITERATIONS, PBKDF2_AES_KEY_LENGTH, PBKDF2_DIGEST);
+	const derived = await pbkdf2$1(key_left, message_key, PBKDF2_ITERATIONS, PBKDF2_AES_KEY_LENGTH, PBKDF2_DIGEST);
 	return {
 		aes_iv: derived.subarray(0, 16),
 		aes_key: derived.subarray(32)
@@ -231,11 +202,11 @@ async function getAesArguments(key_left, message_key) {
 */
 async function encrypt$1(message, key) {
 	if (key.byteLength !== 64) throw new Error("Key must be 64 bytes.");
-	const padding_bytes_meta = (0, node_crypto.randomBytes)(1);
+	const padding_bytes_meta = randomBytes(1);
 	const padding_additional_bytes_count = padding_bytes_meta[0] >>> 6;
 	const payload = Buffer.concat([
 		padding_bytes_meta,
-		(0, node_crypto.randomBytes)(4 + padding_additional_bytes_count),
+		randomBytes(4 + padding_additional_bytes_count),
 		message
 	]);
 	const key_left = key.subarray(0, 32);
@@ -309,17 +280,4 @@ function decrypt(message_encrypted, key) {
 }
 
 //#endregion
-exports.decrypt = decrypt
-exports.encrypt = encrypt
-Object.defineProperty(exports, 'v1', {
-  enumerable: true,
-  get: function () {
-    return v1_exports;
-  }
-});
-Object.defineProperty(exports, 'v2', {
-  enumerable: true,
-  get: function () {
-    return v2_exports;
-  }
-});
+export { decrypt, encrypt, v1_exports as v1, v2_exports as v2 };
