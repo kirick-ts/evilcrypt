@@ -74,7 +74,7 @@ export async function encrypt(
 	// - 2 bits of additional padding length (values 0-3)
 	// - 6 random bits
 	const padding_bytes_meta = randomBytes(1);
-	const padding_additional_bytes_count = padding_bytes_meta[0] >>> 6; // eslint-disable-line no-bitwise
+	const padding_additional_bytes_count = padding_bytes_meta[0]! >>> 6; // eslint-disable-line no-bitwise
 
 	const payload = Buffer.concat([
 		padding_bytes_meta,
@@ -160,6 +160,6 @@ export async function decrypt(
 	}
 
 	return payload.subarray(
-		4 + (payload[0] >>> 6) + 1, // eslint-disable-line no-bitwise
+		4 + (payload[0]! >>> 6) + 1, // eslint-disable-line no-bitwise
 	);
 }

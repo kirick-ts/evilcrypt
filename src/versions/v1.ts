@@ -156,6 +156,6 @@ export async function decrypt(
 	}
 
 	return payload.subarray(
-		payload[0] + 1,
+		payload[0]! + 1,
 	);
 }

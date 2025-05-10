@@ -13,7 +13,7 @@ export function randomInt(min_incl: number, max_not_incl: number): number {
 	const max_from_zero = max_not_incl - min_incl;
 
 	// eslint-disable-next-line no-bitwise
-	const number = ((buffer[0] << 24) | (buffer[1] << 16) | (buffer[2] << 8) | buffer[3]) >>> 0;
+	const number = ((buffer[0]! << 24) | (buffer[1]! << 16) | (buffer[2]! << 8) | buffer[3]!) >>> 0;
 	const number_max = RANDOM_NUMBER_LIMIT - (RANDOM_NUMBER_LIMIT % max_from_zero) - 1;
 
 	if (number > number_max) {
